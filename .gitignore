@@ -1,0 +1,7 @@
+.DS_Store
+lib-cov
+**.swp
+*.swo
+*.swn
+node_modules/
+examples_local/

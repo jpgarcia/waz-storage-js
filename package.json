@@ -1,0 +1,24 @@
+{
+  "name": "waz-storage-js",
+  "version": "0.0.1",
+  "description": "Windows Azure Storage library for Node JS",
+  "keywords": ["azure", "waz", "windows", "blobs", "queues", "tables"],
+  "homepage": "https://github.com/jpgarcia/waz-storage-js",
+  "author": "Juan Pablo Garcia <juanpablogarcia@gmail.com>",
+  "licenses": [ { "type": "MIT", "url": "http://github.com/jpgarcia/waz-storage-js/raw/master/LICENSE" } ],
+  "main": "./index.js",
+  "engines": { "node": ">= 0.2.0" },
+  "dependencies": {
+    "querystring": ">= 0.0.1",
+	"xml2js": ">= 0.1.9"
+  },
+  "devDependencies": {
+    "expresso": >= 0.8.1",
+	"assert": ">= 1.2.0",
+	"sinon": ">= 1.1.1",
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jpgarcia/waz-tables-js.git"
+  }
+}
