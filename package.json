@@ -15,7 +15,7 @@
   "devDependencies": {
     "expresso": >= 0.8.1",
 	"assert": ">= 1.2.0",
-	"sinon": ">= 1.1.1",
+	"sinon": ">= 1.1.1"
   },
   "repository": {
     "type": "git",
