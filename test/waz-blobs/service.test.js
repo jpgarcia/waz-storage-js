@@ -378,11 +378,29 @@ module.exports = {
 								.once();
 
 		var properties = blobService.putBlob('mock-container/blob', 'payload', 'text/xml', {'x-ms-CustomProp': 'value'}, function(err, properties){
-			mock.verify();
 			assert.isNull(err);			
 		});
+
+		mock.verify();	
 	},
-	
+
+	'should get blob contents': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '<xml></xml>', headers: null};
+
+		mock.expects("execute").withArgs('get', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
+								.yields(null, mockData)
+								.once();
+
+		var properties = blobService.getBlob('mock-container/blob', function(err, data){
+			assert.isNull(err);
+			assert.equal(data, mockData.body);
+		});
+
+		mock.verify();		
+	},
+		
 	'should store a blob if metadata if not specified': function(){
 		var blobService = new Service({});
 		var mock = sinon.mock(blobService.coreService);
@@ -393,9 +411,10 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.putBlob('mock-container/blob', 'payload', 'text/xml', null, function(err, properties){
-			mock.verify();
+		var properties = blobService.putBlob('mock-container/blob', 'payload', 'text/xml', null, function(err, data){
 			assert.isNull(err);			
 		});
+
+		mock.verify();		
 	},
 }

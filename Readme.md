@@ -52,7 +52,12 @@ To install via npm
 			});
 			
 			// Getting blob's information
-			result.getBlob('myfolder/my file.txt', function(err, result){
+			result.getBlob('myfolder/my file.txt', function(err, blob){
+				
+				// Getting blob's contents
+				blob.getContents(function(err,data){
+					console.log(data);
+				});				
 			});
 						
 			// Uploading a new Blob
@@ -73,10 +78,14 @@ To install via npm
 
 
 # Remaining Stuff
+* Documentation
+* SharedAccessSignature
 
 ## Blobs
+* Copy / Delete / Snapshot
+* Metadata (get/put)
+* Update contents
 * Blocks
-* Snapshots
 
 ## Queues
 * Everything

@@ -1,4 +1,4 @@
-var waz = require('../');
+var waz = require('waz-storage-js');
 
 waz.establishConnection( { accountName: 'your_account_name', accountKey: 'your_account_key', useSsl: false } );
 
@@ -30,8 +30,11 @@ waz.blobs.container.create('test1', function(err, result){
 					console.log(result);
 				});
 				
-				result.getBlob('Folder/hello world.xml', function(err, result){
+				result.getBlob('Folder/hello world.xml', function(err, blob){
 					console.log(result);
+					blob.getContents(function(err,data){
+						console.log(data);
+					});
 				});
 
 				result.setAcl('container', function(err, result){
