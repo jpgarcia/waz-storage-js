@@ -101,6 +101,11 @@ To install via npm
 
 * Juan Pablo Garcia ([jpgarcia](http://github.com/jpgarcia) | [@jpgd](http://www.twitter.com/jpgd))
 
+# Contributors
+
+* Johnny G. Halife ([johnnyhalife](http://github.com/johnnyhalife) | [@johnnyhalife](http://www.twitter.com/johnnyhalife))
+* Ezequiel Julio Morito ([ezequielm](http://github.com/ezequielm) | [@ezequielm](http://www.twitter.com/ezequielm))
+
 # License 
 
 (The MIT License)
