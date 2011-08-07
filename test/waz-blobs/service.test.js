@@ -1,7 +1,7 @@
 var waz = require('waz-storage')
-		, assert = require('assert')
-		, sinon = require('sinon')
-		, Service = require('../../lib/waz-blobs/service');
+	, assert = require('assert')
+	, sinon = require('sinon')
+	, Service = require('../../lib/waz-blobs/service');
 		
 module.exports = {	
 	
@@ -85,7 +85,7 @@ module.exports = {
 		
 		mock.verify();
 	},
-
+	
 	'should get blob properties': function(){
 		var blobService = new Service({});
 		var mock = sinon.mock(blobService.coreService);

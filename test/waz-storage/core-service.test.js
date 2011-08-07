@@ -1,6 +1,6 @@
 var CoreService = require('waz-storage/core-service')
-				, assert = require('assert')
-				, sinon = require('sinon');
+	, assert = require('assert')
+	, sinon = require('sinon');
 
 module.exports = {
 	

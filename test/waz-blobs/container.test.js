@@ -1,6 +1,6 @@
 var waz = require('waz-storage')
-		, assert = require('assert')
-		, sinon = require('sinon');
+	, assert = require('assert')
+	, sinon = require('sinon');
 
 module.exports = {
 		
@@ -62,14 +62,15 @@ module.exports = {
 		waz.establishConnection({ accountName : 'name', accountKey : 'key' });
 
 		var mock = sinon.mock(waz.blobs.container.serviceInstance);
-		var mockData = { 'x-meta-Name' : "containerName", 'x-meta-CustomProperty' : "customPropertyValue" };
+		var mockData = { 'x-ms-Name' : "containerName", 'x-ms-CustomProperty' : "customPropertyValue" };
 		
 		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).twice();
 		
 		waz.blobs.container.find('containerName', function (err, container) {
 			container.metadata(function(err, metadata) {
-				assert.equal(metadata['x-meta-Name'], "containerName");
-				assert.equal(metadata['x-meta-CustomProperty'], "customPropertyValue");			
+				assert.equal(metadata['x-ms-Name'], "containerName");
+				assert.equal(metadata['x-ms-CustomProperty'], "customPropertyValue");	
+				assert.equal(Object.keys(metadata).length, 2)						
 				assert.isNull(err);
 			});
 		});

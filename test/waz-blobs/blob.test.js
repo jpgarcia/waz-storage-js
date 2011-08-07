@@ -1,8 +1,8 @@
 var waz = require('waz-storage')
-		, assert = require('assert')
-		, sinon = require('sinon')
-		, Blob = require('../../lib/waz-blobs/blob')
-		, Service = require('../../lib/waz-blobs/service');		
+	, assert = require('assert')
+	, sinon = require('sinon')
+	, Blob = require('../../lib/waz-blobs/blob')
+	, Service = require('../../lib/waz-blobs/service');		
 
 module.exports = {
 
@@ -26,7 +26,7 @@ module.exports = {
 		var blobService = new Service({});		
 		var mock = sinon.mock(blobService);
 		
-		var blob = new Blob({name: 'blob_name', url: 'http://localhost/containerName/my%20Blob', contentType: 'text/xml', serviceInstance: blobService});
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/my%20Blob', contentType: 'text/xml', serviceInstance: blobService});
 
 		mock.expects("getBlob").withArgs("containerName/my%20Blob")
 							   .yields(null, '<xml>value</xml>')
@@ -38,5 +38,24 @@ module.exports = {
 		});
 		
 		mock.verify();		
+	},	
+	
+	'should be able to return metadata from a given blob': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		var mockData = { 'x-ms-Name' : "containerName", 'x-ms-CustomProperty' : "customPropertyValue" };		
+		mock.expects("getBlobProperties").withArgs("containerName/blobName").yields(null, mockData).once();
+		
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.metadata(function(err, metadata){
+			assert.equal(Object.keys(metadata).length, 2)
+			assert.equal(metadata['x-ms-Name'], "containerName");
+			assert.equal(metadata['x-ms-CustomProperty'], "customPropertyValue");
+		});
+		
+		mock.verify();			
 	},
 }
