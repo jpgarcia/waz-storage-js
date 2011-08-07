@@ -1,7 +1,7 @@
 var waz = require('waz-storage')
 	, assert = require('assert')
 	, sinon = require('sinon')
-	, Service = require('../../lib/waz-blobs/service');
+	, Service = require('waz-blobs/service');
 		
 module.exports = {	
 	

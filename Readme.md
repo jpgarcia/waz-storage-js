@@ -101,7 +101,6 @@ To install via npm
 
 ## Blobs
 * Copy / Delete / Snapshot
-* Metadata (get/put)
 * Update contents
 * Blocks
 
