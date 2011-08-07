@@ -10,57 +10,65 @@ waz.blobs.container.create('test1', function(err, result){
 		console.log('\n_________| creating a container |_________\n');
 		console.log(err || result);
 		
-		waz.blobs.container.list(function(err, result){
+		waz.blobs.container.list(function(err, containers){
 			console.log('\n_________| listing existing containers |_________\n');
-			console.log(result || err.message);
+			console.log(containers || err.message);
 						
-			result[0].putProperties({'x-ms-Custom' : 'MyValue'}, function(err, result){
+			containers[0].putMetadata({'x-ms-meta-Custom' : 'MyValue'}, function(err, result){
 				console.log(err || result);
+				
+				containers[0].metadata(function(err, result){
+					console.log('\n_________| showing container metadata |_________\n');
+					console.log(err || result);
+				});				
 			});
 
-			waz.blobs.container.find('test1', function(err, result){
+			waz.blobs.container.find('test1', function(err, container){
 				console.log('\n_________| finding a container |_________\n');
-				console.log(err || result);
+				console.log(err || container);
 				
-				result.blobs(function(err, blobs){
+				container.blobs(function(err, blobs){
 					console.log(err || blobs)
 				});
-
-				result.store('Folder/hello world.xml', '<xml/>', 'text/xml', {'x-ms-test': 'myvalue'}, function(err, result){
-					console.log(err || result);
-				});
 				
-				result.getBlob('Folder/hello world.xml', function(err, blob){
-					console.log(err || result);
-					
-					blob.getContents(function(err,data){
-						console.log(err || data);
-					});
-					
-					blob.metadata(function(err, metadata){
-						console.log(err || metadata);
-					});
-				});
-
-				result.setAcl('container', function(err, result){
+				container.setAcl('container', function(err, result){
 					result.getAcl(function(err, result){
 						console.log(err || result);
 					});
 				});
 				
-				result.metadata(function(err, result){
-					console.log('\n_________| showing container metadata |_________\n');
-					console.log(err || result);
-				});
+				container.store('Folder/hello world.xml', '<xml/>', 'text/xml', {'x-ms-test': 'myvalue'}, function(err, helloBlob){
+					console.log(err || helloBlob);
 				
-				waz.blobs.container.delete('test1', function(err){
-					console.log('\n_________| removing a container |_________\n');
-					console.log(err || 'test1 container removed!');
-				});
+					container.getBlob('Folder/hello world.xml', function(err, blob){
+						console.log(err || result);
+					
+						blob.getContents(function(err,data){
+							console.log(err || data);
+						});
 
-				waz.blobs.container.delete('test2', function(err){
-					console.log('\n_________| removing a container |_________\n');
-					console.log(err || 'test2 container removed!');
+						blob.putMetadata({'x-ms-meta-custom': 'value'}, function(err, result) {
+							blob.metadata(function(err, metadata){
+								console.log(err || metadata);
+
+								blob.putProperties({'x-ms-blob-custom': 'value'}, function(err, result) {						
+									blob.properties(function(err, properties){
+										console.log(err || properties);
+										
+										waz.blobs.container.delete('test1', function(err){
+											console.log('\n_________| removing a container |_________\n');
+											console.log(err || 'test1 container removed!');
+										});
+
+										waz.blobs.container.delete('test2', function(err){
+											console.log('\n_________| removing a container |_________\n');
+											console.log(err || 'test2 container removed!');
+										});										
+									});
+								});								
+							});						
+						});						
+					});
 				});
 			});
 		});

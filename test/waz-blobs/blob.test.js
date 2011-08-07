@@ -40,20 +40,73 @@ module.exports = {
 		mock.verify();		
 	},	
 	
+	'should be able to return properties from a given blob': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		var mockData = { 'x-ms-meta-name' : "blobName", 'x-ms-blob-custom' : "value" };		
+		mock.expects("getBlobProperties").withArgs("containerName/blobName").yields(null, mockData).once();
+		
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.properties(function(err, properties){
+			assert.equal(Object.keys(properties).length, 2);
+			assert.equal(properties['x-ms-meta-name'], "blobName");
+			assert.equal(properties['x-ms-blob-custom'], "value");
+		});
+		
+		mock.verify();			
+	},
+		
 	'should be able to return metadata from a given blob': function(){		
 		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
 		var blobService = new Service({});		
 		var mock = sinon.mock(blobService);
 		
-		var mockData = { 'x-ms-Name' : "containerName", 'x-ms-CustomProperty' : "customPropertyValue" };		
-		mock.expects("getBlobProperties").withArgs("containerName/blobName").yields(null, mockData).once();
+		var mockData = { 'x-ms-meta-name' : "blobName", 'x-ms-meta-custom' : "value" };		
+		mock.expects("getBlobMetadata").withArgs("containerName/blobName").yields(null, mockData).once();
 		
 		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
 		
 		blob.metadata(function(err, metadata){
-			assert.equal(Object.keys(metadata).length, 2)
-			assert.equal(metadata['x-ms-Name'], "containerName");
-			assert.equal(metadata['x-ms-CustomProperty'], "customPropertyValue");
+			assert.equal(Object.keys(metadata).length, 2);
+			assert.equal(metadata['x-ms-meta-name'], "blobName");
+			assert.equal(metadata['x-ms-meta-custom'], "value");
+		});
+		
+		mock.verify();			
+	},
+	
+	'should be able to add properties to a blob': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		var mockData = { 'x-ms-CustomProperty' : "customPropertyValue" };		
+		mock.expects("setBlobProperties").withArgs("containerName/blobName").yields(null, mockData).once();
+		
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.putProperties(mockData, function(err){
+			assert.isNull(err)
+		});
+		
+		mock.verify();			
+	},
+	
+	'should be able to add metadata to a blob': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		var mockData = { 'x-ms-meta-custom' : "value" };		
+		mock.expects("setBlobMetadata").withArgs("containerName/blobName").yields(null, mockData).once();
+		
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.putMetadata(mockData, function(err){
+			assert.isNull(err)
 		});
 		
 		mock.verify();			

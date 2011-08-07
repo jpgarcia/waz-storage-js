@@ -89,18 +89,65 @@ module.exports = {
 	'should get blob properties': function(){
 		var blobService = new Service({});
 		var mock = sinon.mock(blobService.coreService);
-		var mockData = {body: '', headers: { 'Content-Type': 'text/xml' } };
+		var mockData = {body: '', headers: { 'x-ms-blob-custom': 'value' } };
 
 		mock.expects("execute").withArgs('head', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
 								.yields(null, mockData)
 								.once();
 
 		var properties = blobService.getBlobProperties('mock-container/blob', function(err, properties){
-			assert.equal(properties['Content-Type'], 'text/xml');
+			assert.equal(properties['x-ms-blob-custom'], 'value');
 			assert.isNull(err);			
 		});
 		
 		mock.verify();
+	},
+	
+	'should get blob metadata': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '', headers: { 'x-ms-meta-custom': 'value' } };
+
+		mock.expects("execute").withArgs('head', 'mock-container/blob', { comp: 'metadata' }, {'x-ms-version': '2009-09-19'}, null)
+								.yields(null, mockData)
+								.once();
+
+		var properties = blobService.getBlobMetadata('mock-container/blob', function(err, metadata){
+			assert.equal(metadata['x-ms-meta-custom'], 'value');
+			assert.isNull(err);			
+		});
+		
+		mock.verify();
+	},
+	
+	'should set blob properties': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("execute").withArgs('put', 'blobPath', { comp: 'properties' }, {'x-ms-version': '2009-09-19', 'x-ms-CustomProp': 'value'}, null)
+								.yields(null, mockData)
+								.once();
+
+		var properties = blobService.setBlobProperties('blobPath', {'x-ms-CustomProp': 'value'}, function(err, properties){
+			mock.verify();
+			assert.isNull(err);			
+		});
+	},
+
+	'should set blob metadata': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("execute").withArgs('put', 'blobPath', { comp: 'metadata' }, {'x-ms-version': '2009-09-19', 'x-ms-meta-CustomProp': 'value'}, null)
+								.yields(null, mockData)
+								.once();
+
+		var properties = blobService.setBlobMetadata('blobPath', {'x-ms-meta-CustomProp': 'value'}, function(err, properties){
+			mock.verify();
+			assert.isNull(err);			
+		});
 	},
 
 	'should set container properties': function(){
@@ -112,12 +159,12 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setContainerProperties('mock-container', {'x-ms-CustomProp': 'value'}, function(err, properties){
+		var properties = blobService.setContainerMetadata('mock-container', {'x-ms-CustomProp': 'value'}, function(err, properties){
 			mock.verify();
 			assert.isNull(err);			
 		});
 	},
-	
+		
 	'should get null when container ACL is not set': function(){
 		var blobService = new Service({});
 		var mock = sinon.mock(blobService.coreService);

@@ -34,9 +34,13 @@ To install via npm
 			// Getting container's metadata
 			container.metadata(function(err, metadata){
 			});
+			
+			// Getting container's properties
+			container.properties(function(err, metadata){
+			});
 
-			// Adding properties to a container
-			container.putProperties({'x-ms-custom' : 'MyValue'}, function(err, result){
+			// Adding metadata to a container
+			container.putMetadata({'x-ms-custom' : 'MyValue'}, function(err, result){
 			});
 			
 			// Getting container's ACL
@@ -53,11 +57,25 @@ To install via npm
 			
 			// Getting blob's information
 			result.getBlob('myfolder/my file.txt', function(err, blob){
+
+				// Adding metadata to a blob
+				blob.putMetadata({'x-ms-custom' : 'MyValue'}, function(err, result){
+				});
+								
+				// Getting blob's metadata
+				blob.metadata(function(err, metadata){
+					console.log(metadata);
+				});
 				
+				// Getting blob's properties
+				blob.properties(function(err, properties){
+					console.log(properties);
+				});
+								
 				// Getting blob's contents
-				blob.getContents(function(err,data){
+				blob.getContents(function(err, data){
 					console.log(data);
-				});				
+				});
 			});
 						
 			// Uploading a new Blob

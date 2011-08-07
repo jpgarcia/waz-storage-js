@@ -87,10 +87,10 @@ module.exports = {
 		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).once();
 				
 		var metadata = { 'x-meta-CustomProperty' : "customPropertyValue" };
-		mock.expects("setContainerProperties").withArgs("containerName", metadata).yields(null, null).once();
+		mock.expects("setContainerMetadata").withArgs("containerName", metadata).yields(null, null).once();
 		
 		waz.blobs.container.find('containerName', function (err, container) {
-			container.putProperties(metadata, function(err, metadata) {
+			container.putMetadata(metadata, function(err, metadata) {
 				assert.isNull(metadata);
 				assert.isNull(err);
 			});
