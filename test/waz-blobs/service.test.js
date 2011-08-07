@@ -31,9 +31,8 @@ module.exports = {
 							   .yields(null, mockData)
 							   .once();
 				
-		blobService.deleteContainer('existing', function(err, data){
-			assert.isNull(err);
-			assert.isNull(data);			
+		blobService.deleteContainer('existing', function(err){
+			assert.isNull(err);		
 		});
 		
 		mock.verify();
@@ -47,9 +46,8 @@ module.exports = {
 							   .yields({ statusCode: 404 }, null)
 							   .once();
 				
-		blobService.deleteContainer('unexisting', function(err, data){
+		blobService.deleteContainer('unexisting', function(err){
 			assert.equal(err.message, 'container `unexisting` not found');
-			assert.isNull(data);			
 		});
 
 		mock.verify();
@@ -129,10 +127,11 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setBlobProperties('blobPath', {'x-ms-CustomProp': 'value'}, function(err, properties){
-			mock.verify();
+		var properties = blobService.setBlobProperties('blobPath', {'x-ms-CustomProp': 'value'}, function(err){
 			assert.isNull(err);			
 		});
+
+		mock.verify();	
 	},
 
 	'should set blob metadata': function(){
@@ -144,10 +143,11 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setBlobMetadata('blobPath', {'x-ms-meta-CustomProp': 'value'}, function(err, properties){
-			mock.verify();
+		var properties = blobService.setBlobMetadata('blobPath', {'x-ms-meta-CustomProp': 'value'}, function(err){
 			assert.isNull(err);			
 		});
+
+		mock.verify();		
 	},
 
 	'should set container properties': function(){
@@ -159,10 +159,11 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setContainerMetadata('mock-container', {'x-ms-CustomProp': 'value'}, function(err, properties){
-			mock.verify();
+		var properties = blobService.setContainerMetadata('mock-container', {'x-ms-CustomProp': 'value'}, function(err){
 			assert.isNull(err);			
 		});
+		
+		mock.verify();		
 	},
 		
 	'should get null when container ACL is not set': function(){
@@ -225,7 +226,7 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setContainerAcl('mock-container', 'blob', function(err, properties){
+		var properties = blobService.setContainerAcl('mock-container', 'blob', function(err){
 			assert.isNull(err);
 		});
 		
@@ -242,7 +243,7 @@ module.exports = {
 								.yields(null, mockData)
 								.once();
 
-		var properties = blobService.setContainerAcl('mock-container', null, function(err, properties){
+		var properties = blobService.setContainerAcl('mock-container', null, function(err){
 			assert.isNull(err);			
 		});
 		
@@ -460,6 +461,39 @@ module.exports = {
 
 		var properties = blobService.putBlob('mock-container/blob', 'payload', 'text/xml', null, function(err, data){
 			assert.isNull(err);			
+		});
+
+		mock.verify();		
+	},
+
+	'should delete a blob': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("execute").withArgs('delete', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
+								.yields(null)
+								.once();
+
+		var properties = blobService.deleteBlob('mock-container/blob', function(err){
+			assert.isNull(err);			
+		});
+
+		mock.verify();		
+	},
+	
+	'should throw when trying to delete an unexisting blob': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService.coreService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("execute").withArgs('delete', 'mock-container/unexisting', null, {'x-ms-version': '2009-09-19'}, null)
+								.yields({statusCode:404})
+								.once();
+
+		var properties = blobService.deleteBlob('mock-container/unexisting', function(err){
+			assert.isNotNull(err)
+			assert.equal(err.message, 'blob `mock-container/unexisting` not found');			
 		});
 
 		mock.verify();		

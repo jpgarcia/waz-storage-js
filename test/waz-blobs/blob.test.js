@@ -40,6 +40,24 @@ module.exports = {
 		mock.verify();		
 	},	
 	
+	'should delete a blob': function(){
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService);
+		
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/my%20Blob', contentType: 'text/xml', serviceInstance: blobService});
+
+		mock.expects("deleteBlob").withArgs("containerName/my%20Blob")
+							   	  .yields(null)
+							      .once();
+
+		blob.destroy(function(err){
+			assert.isNull(err);
+		});
+		
+		mock.verify();		
+	},
+	
 	'should be able to return properties from a given blob': function(){		
 		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
 		var blobService = new Service({});		

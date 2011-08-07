@@ -87,11 +87,10 @@ module.exports = {
 		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).once();
 				
 		var metadata = { 'x-meta-CustomProperty' : "customPropertyValue" };
-		mock.expects("setContainerMetadata").withArgs("containerName", metadata).yields(null, null).once();
+		mock.expects("setContainerMetadata").withArgs("containerName", metadata).yields(null).once();
 		
 		waz.blobs.container.find('containerName', function (err, container) {
-			container.putMetadata(metadata, function(err, metadata) {
-				assert.isNull(metadata);
+			container.putMetadata(metadata, function(err) {
 				assert.isNull(err);
 			});
 		});
@@ -162,10 +161,10 @@ module.exports = {
 
 		var mockData = { 'x-meta-Name' : "containerName" };
 		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).once();
-		mock.expects("setContainerAcl").withArgs("containerName", "blob").yields(null, null).once();
+		mock.expects("setContainerAcl").withArgs("containerName", "blob").yields(null).once();
 				
 		waz.blobs.container.find('containerName', function (err, container) {
-			container.setAcl('blob', function(err, data){
+			container.setAcl('blob', function(err, data){				
 				assert.equal(data, container);
 				assert.isNull(err);
 			});

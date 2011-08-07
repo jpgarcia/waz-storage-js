@@ -21,11 +21,11 @@ To install via npm
 ## Blobs
 
 	// Creating a new container
-	waz.blobs.container.create('myContainer', function(err, result){
+	waz.blobs.container.create('myContainer', function(err, container){
 	});
 	
 	// Listing existing containers
-	waz.blobs.container.list(function(err, result){
+	waz.blobs.container.list(function(err, containers){
 	});
 
 	// Finding a container
@@ -36,49 +36,54 @@ To install via npm
 			});
 			
 			// Getting container's properties
-			container.properties(function(err, metadata){
+			container.properties(function(err, properties){
 			});
 
 			// Adding metadata to a container
-			container.putMetadata({'x-ms-custom' : 'MyValue'}, function(err, result){
+			container.putMetadata({'x-ms-custom' : 'MyValue'}, function(err){
 			});
 			
 			// Getting container's ACL
-			container.getAcl(function(err, result){
+			container.getAcl(function(err, acl){
 			});
 			
 			// Setting container's ACL (null, 'blob', 'container')
-			container.setAcl('container', function(err, result){
+			container.setAcl('container', function(err, container){
 			});
 			
 			// Listing blobs in a container
-			container.blobs(function(err, result){
+			container.blobs(function(err, blobs){
 			});
 			
 			// Getting blob's information
 			result.getBlob('myfolder/my file.txt', function(err, blob){
 
 				// Adding metadata to a blob
-				blob.putMetadata({'x-ms-custom' : 'MyValue'}, function(err, result){
+				blob.putMetadata({'x-ms-custom' : 'MyValue'}, function(err){
 				});
 								
 				// Getting blob's metadata
 				blob.metadata(function(err, metadata){
-					console.log(metadata);
+				});
+
+				// Adding properties to a blob
+				blob.putProperties({'x-ms-blob-property1': 'MyValue'}, function(err, properties){
 				});
 				
 				// Getting blob's properties
 				blob.properties(function(err, properties){
-					console.log(properties);
 				});
 								
 				// Getting blob's contents
 				blob.getContents(function(err, data){
-					console.log(data);
+					
+					// Removing a blob
+					blob.destroy(function(err){
+					});					
 				});
 			});
 						
-			// Uploading a new Blob
+			// Storing a new Blob
 			result.store('folder/my file.xml', '<xml>content</xml>', 'text/xml', {'x-ms-MyProperty': 'value'}, function(err, result){
 			});			
 		}
