@@ -129,4 +129,23 @@ module.exports = {
 		
 		mock.verify();			
 	},
+	
+	'should copy a blob and return the copied instance': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+				
+		mock.expects("copyBlob").withArgs("containerName/blobName", "containerName/newName").yields(null).once();
+		mock.expects("getBlobProperties").withArgs("containerName/newName").yields(null, {'Content-Type': 'text/xml'}).once();		
+		mock.expects("generateRequestUri").withArgs("containerName/newName").returns('http://localhost/containerName/newName').once();		
+						
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.copy('containerName/newName', function(err, blob){
+			assert.equal(blob.path, 'containerName/newName')
+			assert.equal(blob.contentType, 'text/xml')			
+		});
+		
+		mock.verify();			
+	},
 }

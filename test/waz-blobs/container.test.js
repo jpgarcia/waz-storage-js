@@ -284,19 +284,29 @@ module.exports = {
 		var mock = sinon.mock(waz.blobs.container.serviceInstance);
 
 		var mockData = { 'x-meta-Name' : "containerName" };
-		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).once();
-		
+
 		mock.expects("putBlob").withArgs("containerName/my%20Blob", '<xml><sample>value</sample></xml>', 'text/xml', {'x-ms-test': 'value'})
 							   .yields(null, null)
 							   .once();
-				
-		waz.blobs.container.find('containerName', function (err, container) {
-			container.store('my Blob', '<xml><sample>value</sample></xml>', 'text/xml', {'x-ms-test': 'value'}, function(err, blob){
-				assert.equal(blob.name, 'my Blob');
-				assert.equal(blob.contentType, 'text/xml');
-				assert.equal(blob.url, 'http://mock-account.blob.core.windows.net/containerName/my%20Blob');
-				assert.isNull(err);
-			});
+
+		mock.expects("generateRequestUri").withArgs("containerName/my%20Blob")
+							   .returns('http://foo')
+							   .once();
+							
+		var Container = require('waz-blobs/container');		
+
+		var options = { name: 'containerName', 
+						url: 'http://bar', 
+						serviceInstance: waz.blobs.container.serviceInstance, 
+						lastModified: 'mockDate' }
+
+		var container = new Container(options);
+
+		container.store('my Blob', '<xml><sample>value</sample></xml>', 'text/xml', {'x-ms-test': 'value'}, function(err, blob){
+			assert.equal(blob.name, 'my Blob');
+			assert.equal(blob.contentType, 'text/xml');
+			assert.equal(blob.url, 'http://foo');
+			assert.isNull(err);
 		});
 		
 		mock.verify();	
@@ -308,19 +318,28 @@ module.exports = {
 		var mock = sinon.mock(waz.blobs.container.serviceInstance);
 
 		var mockData = { 'x-meta-Name' : "containerName" };
-		mock.expects("getContainerProperties").withArgs("containerName").yields(null, mockData).once();
 
 		mock.expects("putBlob").withArgs("containerName/my%20Blob", '<xml><sample>value</sample></xml>', "application/octet-stream", {'x-ms-test': 'value'})
 							   .yields(null, null)
 							   .once();
+		mock.expects("generateRequestUri").withArgs("containerName/my%20Blob")
+							   .returns('http://foo')
+							   .once();							
 
-		waz.blobs.container.find('containerName', function (err, container) {
-			container.store('my Blob', '<xml><sample>value</sample></xml>', null, {'x-ms-test': 'value'}, function(err, blob){
-				assert.equal(blob.name, 'my Blob');
-				assert.equal(blob.contentType, 'application/octet-stream');
-				assert.equal(blob.url, 'http://mock-account.blob.core.windows.net/containerName/my%20Blob');
-				assert.isNull(err);
-			});
+		var Container = require('waz-blobs/container');		
+
+		var options = { name: 'containerName', 
+						url: 'http://bar', 
+						serviceInstance: waz.blobs.container.serviceInstance, 
+						lastModified: 'mockDate' }
+
+		var container = new Container(options);
+
+		container.store('my Blob', '<xml><sample>value</sample></xml>', null, {'x-ms-test': 'value'}, function(err, blob){
+			assert.equal(blob.name, 'my Blob');
+			assert.equal(blob.contentType, 'application/octet-stream');
+			assert.equal(blob.url, 'http://foo');
+			assert.isNull(err);
 		});
 
 		mock.verify();	

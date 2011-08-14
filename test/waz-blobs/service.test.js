@@ -7,7 +7,7 @@ module.exports = {
 	
 	'should create a new container': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 		var mockData = { body:'', headers: {'x-ms-meta-Name': 'newContainer'} };
 		
 		mock.expects("execute").withArgs('put', 'newContainer', { restype: 'container' }, {'x-ms-version': '2009-09-19'}, null)
@@ -24,7 +24,7 @@ module.exports = {
 	
 	'should delete container': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 		var mockData = { body: '', headers: {'x-ms-meta-Name': 'newContainer'}, statusCode: 202 };
 		
 		mock.expects("execute").withArgs('delete', 'existing', { restype: 'container' }, {'x-ms-version': '2009-09-19'}, null)
@@ -40,7 +40,7 @@ module.exports = {
 	
 	'should throw when unexisting container is provided for deletion': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 		
 		mock.expects("execute").withArgs('delete', 'unexisting', { restype: 'container' }, {'x-ms-version': '2009-09-19'}, null)
 							   .yields({ statusCode: 404 }, null)
@@ -55,7 +55,7 @@ module.exports = {
 			
 	'should report an error when creating a container that already exists': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);	
+		var mock = sinon.mock(blobService);	
 		mock.expects("execute").withArgs('put', 'existing', { restype: 'container' }, {'x-ms-version': '2009-09-19'}, null)
 								.yields({ statusCode: 409 }, null)
 								.once();
@@ -70,7 +70,7 @@ module.exports = {
 	
 	'should get container properties': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('get', 'mock-container', { restype: 'container' }, {'x-ms-version': '2009-09-19'}, null)
@@ -86,7 +86,7 @@ module.exports = {
 	
 	'should get blob properties': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: { 'x-ms-blob-custom': 'value' } };
 
 		mock.expects("execute").withArgs('head', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
@@ -103,7 +103,7 @@ module.exports = {
 	
 	'should get blob metadata': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: { 'x-ms-meta-custom': 'value' } };
 
 		mock.expects("execute").withArgs('head', 'mock-container/blob', { comp: 'metadata' }, {'x-ms-version': '2009-09-19'}, null)
@@ -120,7 +120,7 @@ module.exports = {
 	
 	'should set blob properties': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('put', 'blobPath', { comp: 'properties' }, {'x-ms-version': '2009-09-19', 'x-ms-CustomProp': 'value'}, null)
@@ -136,7 +136,7 @@ module.exports = {
 
 	'should set blob metadata': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('put', 'blobPath', { comp: 'metadata' }, {'x-ms-version': '2009-09-19', 'x-ms-meta-CustomProp': 'value'}, null)
@@ -152,7 +152,7 @@ module.exports = {
 
 	'should set container properties': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('put', 'mock-container', { restype: 'container', comp: 'metadata' }, {'x-ms-version': '2009-09-19', 'x-ms-CustomProp': 'value'}, null)
@@ -168,7 +168,7 @@ module.exports = {
 		
 	'should get null when container ACL is not set': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('get', 'mock-container', { restype: 'container', comp: 'acl' }, {'x-ms-version': '2009-09-19'}, null)
@@ -185,7 +185,7 @@ module.exports = {
 	
 	'should get Container ACL when is set': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: {'x-ms-blob-public-access': 'blob'}};
 
 		mock.expects("execute").withArgs('get', 'mock-container', { restype: 'container', comp: 'acl' }, {'x-ms-version': '2009-09-19'}, null)
@@ -202,7 +202,7 @@ module.exports = {
 		
 	'should throw when error when retrieving container ACL': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 
 		mock.expects("execute").withArgs('get', 'unexisting', { restype: 'container', comp: 'acl'  }, {'x-ms-version': '2009-09-19'}, null)
 							   .yields({ statusCode: 400 }, null)
@@ -218,7 +218,7 @@ module.exports = {
 	
 	'should set container acl': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 		var payload = '<?xml version="1.0" encoding="utf-8"?><SignedIdentifiers />';
 		
@@ -235,7 +235,7 @@ module.exports = {
 	
 	'should set container acl to none': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: {}};
 		var payload = '<?xml version="1.0" encoding="utf-8"?><SignedIdentifiers />';
 
@@ -253,7 +253,7 @@ module.exports = {
 	'should return null when there are no containers': function(){
 
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 
 		var mockBody = '<?xml version="1.0" encoding="utf-8"?><EnumerationResults AccountName="http://jpg.blob.core.windows.net/"><Containers /><NextMarker /></EnumerationResults>';
 		var mockData = { body: mockBody, headers: null };
@@ -272,7 +272,7 @@ module.exports = {
 	
 	'should list only one container': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 
 		var mockBody = '<?xml version="1.0" encoding="utf-8"?> \
             <EnumerationResults AccountName="http://myaccount.blob.core.windows.net"> \
@@ -304,7 +304,7 @@ module.exports = {
 	
 	'should list more than one container': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 	
 		var mockBody = '<?xml version="1.0" encoding="utf-8"?> \
             <EnumerationResults AccountName="http://myaccount.blob.core.windows.net"> \
@@ -344,7 +344,7 @@ module.exports = {
 	
 	'should list blobs' : function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 		var mockBody = '<?xml version="1.0" encoding="utf-8"?> \
 	                <EnumerationResults AccountName="http://myaccount.blob.core.windows.net"> \
 	                 <Blobs> \
@@ -393,7 +393,7 @@ module.exports = {
 		
 	'should return [] if any blobs found' : function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);		
+		var mock = sinon.mock(blobService);		
 		var mockBody = '<?xml version="1.0" encoding="utf-8"?> \
 							<EnumerationResults ContainerName="http://jpg.blob.core.windows.net/test1"> \
 								<MaxResults>1000</MaxResults> \
@@ -417,7 +417,7 @@ module.exports = {
 		
 	'should store a blob': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 		var expectedHeaders = {'Content-Type': 'text/xml', 'x-ms-blob-type': 'BlockBlob', 'x-ms-version': '2009-09-19', 'x-ms-blob-content-type': 'text/xml' , 'x-ms-CustomProp': 'value'};
 
@@ -434,7 +434,7 @@ module.exports = {
 
 	'should get blob contents': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '<xml></xml>', headers: null};
 
 		mock.expects("execute").withArgs('get', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
@@ -451,7 +451,7 @@ module.exports = {
 		
 	'should store a blob if metadata if not specified': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 		var expectedHeaders = {'Content-Type': 'text/xml', 'x-ms-blob-type': 'BlockBlob', 'x-ms-version': '2009-09-19','x-ms-blob-content-type': 'text/xml'};
 
@@ -468,7 +468,7 @@ module.exports = {
 
 	'should delete a blob': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('delete', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
@@ -484,7 +484,7 @@ module.exports = {
 	
 	'should throw when trying to delete an unexisting blob': function(){
 		var blobService = new Service({});
-		var mock = sinon.mock(blobService.coreService);
+		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
 		mock.expects("execute").withArgs('delete', 'mock-container/unexisting', null, {'x-ms-version': '2009-09-19'}, null)
@@ -498,4 +498,25 @@ module.exports = {
 
 		mock.verify();		
 	},
+	
+	'should copy a blob': function(){
+		var blobService = new Service({accountName: 'account'});
+		var mock = sinon.mock(blobService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("canonicalizeMessage").withArgs('container/sourceFile')
+								.returns('/account/container/sourceFile')
+								.once();
+
+		mock.expects("execute").withArgs('put', 'container/destinationFile', null, {'x-ms-version': '2009-09-19', 'x-ms-copy-source': '/account/container/sourceFile'}, null)
+								.yields(null)
+								.once();
+
+		var properties = blobService.copyBlob('container/sourceFile', 'container/destinationFile', function(err){	
+			assert.isNull(err);	
+		});
+
+		mock.verify();		
+	},
+	        
 }

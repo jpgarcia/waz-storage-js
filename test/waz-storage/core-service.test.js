@@ -7,7 +7,7 @@ module.exports = {
 	'should generate URI with given operation': function(){		
 		var options = { accountName: "mock-account", accountKey: "mock-key", useSsl: true,
 						typeOfService: "queue", baseUrl: "localhost" };
-    	
+
 		var service = new CoreService(options);
 		assert.equal(service.generateRequestUri(null, { comp: 'list'}), "https://mock-account.queue.localhost/?comp=list");
 	},
