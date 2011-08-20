@@ -76,10 +76,14 @@ To install via npm
 								
 				// Getting blob's contents
 				blob.getContents(function(err, data){
-					
+
+					// Copying a blob
+					blob.copy('container/newFolder/my file_copy.txt', function(err, newBlob){
+					});					
+
 					// Removing a blob
 					blob.destroy(function(err){
-					});					
+					});
 				});
 			});
 						
@@ -105,7 +109,7 @@ To install via npm
 * SharedAccessSignature
 
 ## Blobs
-* Copy / Delete / Snapshot
+* Snapshot
 * Update contents
 * Blocks
 
