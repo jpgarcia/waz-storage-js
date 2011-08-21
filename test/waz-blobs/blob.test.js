@@ -7,7 +7,7 @@ var waz = require('waz-storage')
 module.exports = {
 
 	'should return blob path from url': function(){	
-		var blob = new Blob({name: 'blob_name', url: 'http://localhost/container/blob', contentType: 'text/xml'})
+		var blob = new Blob({name: 'blob_name', url: 'http://localhost/container/blob', contentType: 'text/xml'});
 		assert.equal(blob.path, "container/blob");
 	},
 	
@@ -17,7 +17,7 @@ module.exports = {
 	},
 	
 	'blob path should not include additional parameters': function(){	
-		var blob = new Blob({name: 'blob_name', url: 'http://localhost/container/blob?snapshot=foo&additional=true', contentType: 'text/xml'})
+		var blob = new Blob({name: 'blob_name', url: 'http://localhost/container/blob?snapshot=foo&additional=true', contentType: 'text/xml'});
 		assert.equal(blob.path, "container/blob?snapshot=foo");
 	},
 	
@@ -107,7 +107,7 @@ module.exports = {
 		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
 		
 		blob.putProperties(mockData, function(err){
-			assert.isNull(err)
+			assert.isNull(err);
 		});
 		
 		mock.verify();			
@@ -124,7 +124,7 @@ module.exports = {
 		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
 		
 		blob.putMetadata(mockData, function(err){
-			assert.isNull(err)
+			assert.isNull(err);
 		});
 		
 		mock.verify();			
@@ -142,10 +142,63 @@ module.exports = {
 		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
 		
 		blob.copy('containerName/newName', function(err, blob){
-			assert.equal(blob.path, 'containerName/newName')
-			assert.equal(blob.contentType, 'text/xml')			
+			assert.equal(blob.path, 'containerName/newName');
+			assert.equal(blob.contentType, 'text/xml');
 		});
 		
 		mock.verify();			
 	},
+	
+	'should throw an error when trying to update a snapshot blob': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+										
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', contentType: 'text/xml', serviceInstance: blobService, snapshotDate: 'mock-date'});
+		
+		blob.updateContents('new-content', function(err){
+			assert.equal(err, 'Invalid operation: Cannot modify snapshot contents.');
+		});
+		
+		mock.verify();			
+	},
+	
+	'should update blob contents with current blob contentType/metadata': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		mock.expects("putBlob").withArgs("containerName/blobName", "new-content", 'text/xml', null).yields(null, {'x-ms-request-id' : 'mock-request-id'}).once();
+										
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', path: 'containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.updateContents('new-content', function(err, blob){	
+			assert.equal(blob.requestId, 'mock-request-id');
+			assert.isNull(err);
+		});
+		
+		mock.verify();			
+	},
+	
+	'should update blob contents and its contentType and metadata ': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		mock.expects("putBlob").withArgs("containerName/blobName", "new-content", 'newContentType', {'x-ms-sample-meta': 'metadata'}).yields(null, {'x-ms-request-id' : 'mock-request-id'}).once();
+										
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', path: 'containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		blob.metadataValue = {'x-ms-sample-meta': 'metadata'};
+		blob.contentType = 'newContentType'
+		
+		blob.updateContents('new-content', function(err, blob){	
+			assert.equal(blob.requestId, 'mock-request-id');
+			assert.equal(blob.metadataValue['x-ms-sample-meta'], 'metadata');
+			assert.equal(blob.contentType, 'newContentType');
+			assert.isNull(err);
+		});
+		
+		mock.verify();			
+	},
+
 }
