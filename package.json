@@ -1,6 +1,6 @@
 {
   "name": "waz-storage-js",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Windows Azure Storage library for Node JS",
   "keywords": ["azure", "waz", "windows", "blobs", "queues", "tables"],
   "homepage": "https://github.com/jpgarcia/waz-storage-js",
