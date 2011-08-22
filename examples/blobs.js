@@ -55,6 +55,11 @@ waz.blobs.container.create('container1', function(err, container1){
 							console.log(err || newBlob);
 						});
 						
+						blob.snapshot(function(err, blobWithSnapshot){
+							console.log('\n_________| creating a snapshot of a blob |_________\n');
+							console.log(err || blobWithSnapshot.snapshotDate);
+						});
+						
 						blob.getContents(function(err,data){
 							console.log('\n_________| displaying blob contents |_________\n');
 							console.log(err || data);
@@ -75,21 +80,28 @@ waz.blobs.container.create('container1', function(err, container1){
 									blob.properties(function(err, properties){
 										console.log('\n_________| displaying blob properties |_________\n');
 										console.log(err || properties);
-										
-										blob.destroy(function(err){			
-											console.log('\n_________| destroying a blob |_________\n');
-											console.log(err || 'blob `' + blob.path + '` removed!');
 
-											waz.blobs.container.delete('container1', function(err){
-												console.log('\n_________| removing a container |_________\n');
-												console.log(err || '`container1` container removed!');
-											});
+										blob.contentType = 'newContentType'
+										blob.metadata = {'x-ms-new-metadata': 'value'};
+										console.log(blob);
+										blob.updateContents('new-content', function(err, updatedBlob){
+											console.log('\n_________| updating blob contents |_________\n');
+											console.log(err || updatedBlob.requestId);											
+											updatedBlob.destroy(function(err){			
+												console.log('\n_________| destroying a blob |_________\n');
+												console.log(err || 'blob `' + updatedBlob.path + '` removed!');
 
-											waz.blobs.container.delete('container2', function(err){
-												console.log('\n_________| removing a container |_________\n');
-												console.log(err || '`container2` container removed!');
+												waz.blobs.container.delete('container1', function(err){
+													console.log('\n_________| removing a container |_________\n');
+													console.log(err || '`container1` container removed!');
+												});
+
+												waz.blobs.container.delete('container2', function(err){
+													console.log('\n_________| removing a container |_________\n');
+													console.log(err || '`container2` container removed!');
+												});
 											});
-										});
+										});																	
 									});
 								});								
 							});						

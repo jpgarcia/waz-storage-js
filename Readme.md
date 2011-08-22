@@ -109,8 +109,7 @@ To install via npm
 * SharedAccessSignature
 
 ## Blobs
-* Snapshot
-* Update contents
+* Shared Access Signature
 * Blocks
 
 ## Queues

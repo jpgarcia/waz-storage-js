@@ -200,5 +200,26 @@ module.exports = {
 		
 		mock.verify();			
 	},
-
+	
+	'should shapshot a given blob and fill corresponding blob properties': function(){		
+		waz.establishConnection({ accountName : 'name', accountKey : 'key' });		
+		var blobService = new Service({});		
+		var mock = sinon.mock(blobService);
+		
+		mock.expects("snapshotBlob").withArgs("containerName/blobName")
+									.yields(null, {'x-ms-snapshot' : 'mock-snapshotDate', 'x-ms-request-id' : 'mock-request-id', 'ETag': 'mock-etag', 'Last-Modified': 'mock-lastModified'})
+									.once();
+										
+		var blob = new Blob({name: 'blobName', url: 'http://localhost/containerName/blobName', path: 'containerName/blobName', contentType: 'text/xml', serviceInstance: blobService});
+		
+		blob.snapshot(function(err, blob){	
+			assert.equal(blob.requestId, 'mock-request-id');
+			assert.equal(blob.etag, 'mock-etag');
+			assert.equal(blob.snapshotDate, 'mock-snapshotDate');
+			assert.equal(blob.lastModified, 'mock-lastModified');			
+			assert.isNull(err);
+		});
+		
+		mock.verify();			
+	},
 }

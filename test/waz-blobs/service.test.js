@@ -471,11 +471,11 @@ module.exports = {
 		var mock = sinon.mock(blobService);
 		var mockData = {body: '', headers: null};
 
-		mock.expects("execute").withArgs('delete', 'mock-container/blob', null, {'x-ms-version': '2009-09-19'}, null)
+		mock.expects("execute").withArgs('delete', 'container/blob', null, {'x-ms-version': '2009-09-19'}, null)
 								.yields(null)
 								.once();
 
-		var properties = blobService.deleteBlob('mock-container/blob', function(err){
+		var properties = blobService.deleteBlob('container/blob', function(err){
 			assert.isNull(err);			
 		});
 
@@ -497,8 +497,29 @@ module.exports = {
 		});
 
 		mock.verify();		
+	},	
+
+	'should throw when trying to copy an unexisting blob': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("canonicalizeMessage").withArgs('container/unexisting')
+								.returns('/account/container/unexisting')
+								.once();
+
+		mock.expects("execute").withArgs('put', 'container/destinationFile', null, {'x-ms-version': '2009-09-19', 'x-ms-copy-source': '/account/container/unexisting'}, null)
+								.yields({statusCode:404})
+								.once();
+
+		var properties = blobService.copyBlob('container/unexisting', 'container/destinationFile', function(err, data){
+			assert.isNotNull(err)
+			assert.equal(err.message, 'blob `container/unexisting` not found');			
+		});
+
+		mock.verify();		
 	},
-	
+		
 	'should copy a blob': function(){
 		var blobService = new Service({accountName: 'account'});
 		var mock = sinon.mock(blobService);
@@ -518,5 +539,40 @@ module.exports = {
 
 		mock.verify();		
 	},
-	        
+	
+	'should create a snapshot of a given blob': function(){
+		var blobService = new Service({accountName: 'account'});
+		var mock = sinon.mock(blobService);
+		var mockData = {body: '', headers: null};
+		
+		var expectedHeaders = { headers: {'x-ms-snapshot': 'mock-date' }};
+		
+		mock.expects("execute").withArgs('put', 'container/blob', {comp: 'snapshot'}, {'x-ms-version': '2009-09-19'}, null)
+								.yields(null, expectedHeaders)
+								.once();
+
+		var properties = blobService.snapshotBlob('container/blob', function(err, data){	
+			assert.isNull(err);
+			assert.equal(data, expectedHeaders.headers);
+		});
+
+		mock.verify();
+	},
+
+	'should throw when trying to snapshot an unexisting blob': function(){
+		var blobService = new Service({});
+		var mock = sinon.mock(blobService);
+		var mockData = {body: '', headers: null};
+
+		mock.expects("execute").withArgs('put', 'container/unexisting', {comp: 'snapshot'}, {'x-ms-version': '2009-09-19'}, null)
+								.yields({statusCode:404}, null)
+								.once();
+
+		var properties = blobService.snapshotBlob('container/unexisting', function(err, data){
+			assert.isNotNull(err)
+			assert.equal(err.message, 'blob `container/unexisting` not found');			
+		});
+
+		mock.verify();		
+	},
 }
