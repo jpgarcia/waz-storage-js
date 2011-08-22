@@ -73,16 +73,27 @@ To install via npm
 				// Getting blob's properties
 				blob.properties(function(err, properties){
 				});
-								
+				
+				// Creating a snapshot of a blob
+				blob.snapshot(function(err, blob){
+					console.log(blob.snapshotDate);
+				});
+												
 				// Getting blob's contents
 				blob.getContents(function(err, data){
+					
+					blob.metadata = {'x-ms-custom-medatada': 'value'};
+					blob.contentType = 'text/css';
+					
+					// Updating blob's contents
+					blob.updateContents('new-content', function(err, blob){
+						// Copying a blob
+						blob.copy('container/newFolder/my file_copy.txt', function(err, newBlob){
+						});					
 
-					// Copying a blob
-					blob.copy('container/newFolder/my file_copy.txt', function(err, newBlob){
-					});					
-
-					// Removing a blob
-					blob.destroy(function(err){
+						// Removing a blob
+						blob.destroy(function(err){
+						});
 					});
 				});
 			});
