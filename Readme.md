@@ -117,10 +117,8 @@ To install via npm
 
 # Remaining Stuff
 * Documentation
-* SharedAccessSignature
 
 ## Blobs
-* Shared Access Signature
 * Blocks
 
 ## Queues
