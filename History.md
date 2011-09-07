@@ -1,3 +1,8 @@
+0.1.2 / TBD
+==================
+* Added remaining Blob functionality:
+ 	- Support for Blocks
+
 0.1.1 / 2011-08-22
 ==================
 * Added remaining Blob functionality:

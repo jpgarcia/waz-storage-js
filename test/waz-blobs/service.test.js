@@ -574,5 +574,24 @@ module.exports = {
 		});
 
 		mock.verify();		
+	},	
+	
+	'should put a new block': function(){
+		var blobService = new Service({accountName: 'account'});
+		var mock = sinon.mock(blobService);
+		var mockData = {body: '', headers: null};
+		
+		var mockResponse = { headers: {'x-ms-request-id': 'mock-date' }, statusCode: 201};
+
+		mock.expects("execute").withArgs('put', 'container/blob', { comp : 'block', blockid: 'identifier' }, {'Content-Type': "application/octet-stream"}, 'payload')
+								.yields(null, mockResponse)
+								.once();
+
+		var properties = blobService.putBlock('container/blob', 'identifier', 'payload' , function(err, data){	
+			assert.isNull(err);
+			assert.equal(data, mockResponse.headers);
+		});
+
+		mock.verify();
 	},
 }

@@ -10,11 +10,12 @@
   "engines": { "node": ">= 0.2.0" },
   "dependencies": {
     "querystring": ">= 0.0.1",
-	"xml2js": ">= 0.1.9"
+	"xml2js": ">= 0.1.9",
+	"underscore.string": ">= 1.1.6"
   },
   "devDependencies": {
     "expresso": ">= 0.8.1",
-	"assert": ">= 1.2.0",
+	"assert": ">= 0.4.9",
 	"sinon": ">= 1.1.1"
   },
   "repository": {

@@ -1,6 +1,7 @@
 var waz = require('waz-storage')
 	, assert = require('assert')
-	, sinon = require('sinon');
+	, sinon = require('sinon')
+	, _s = require('underscore.string');
 
 module.exports = {
 		
@@ -321,10 +322,7 @@ module.exports = {
 
 		mock.expects("putBlob").withArgs("containerName/my%20Blob", '<xml><sample>value</sample></xml>', "application/octet-stream", {'x-ms-test': 'value'})
 							   .yields(null, null)
-							   .once();
-		mock.expects("generateRequestUri").withArgs("containerName/my%20Blob")
-							   .returns('http://foo')
-							   .once();							
+							   .once();			
 
 		var Container = require('waz-blobs/container');		
 
@@ -338,10 +336,59 @@ module.exports = {
 		container.store('my Blob', '<xml><sample>value</sample></xml>', null, {'x-ms-test': 'value'}, function(err, blob){
 			assert.equal(blob.name, 'my Blob');
 			assert.equal(blob.contentType, 'application/octet-stream');
-			assert.equal(blob.url, 'http://foo');
+			assert.equal(blob.url, 'http://mock-account.blob.core.windows.net/containerName/my%20Blob');
 			assert.isNull(err);
 		});
 
 		mock.verify();	
+	},
+	
+	'should upload a stream to a blob': function() {
+		waz.establishConnection({ accountName : 'mock-account', accountKey : 'key' });
+
+		var mock = sinon.mock(waz.blobs.container.serviceInstance);
+		
+		var Container = require('waz-blobs/container');		
+		var options = { name: 'containerName', 
+						url: 'http://bar', 
+						serviceInstance: waz.blobs.container.serviceInstance, 
+						lastModified: 'mockDate' }
+
+		var container = new Container(options);
+		
+		var fs = require('fs');
+		
+		var stream = fs.createReadStream('./test/mock-files/sample.txt', { 'flags': 'r' , 'encoding': 'utf-8', 'bufferSize': 9});
+		
+		var identifier0 =  new Buffer(_s.pad(0, 64, '0')).toString('base64');
+		var identifier1 =  new Buffer(_s.pad(1, 64, '0')).toString('base64');		
+		
+		mock.expects("putBlock").withArgs("containerName/my%20Blob", identifier0, '123456789')
+							    .yields(null)
+							    .once();
+							
+		mock.expects("putBlock").withArgs("containerName/my%20Blob", identifier1, '0')
+							    .yields(null)
+							    .once();
+							
+		mock.expects("putBlockList").withArgs("containerName/my%20Blob", [identifier0, identifier1], "plain/text", {'x-ms-test': 'value'})
+							    	.yields(null, {'x-ms-request-id': 'id'})
+							    	.once();
+
+		var uploader = container.upload('my Blob', stream, "plain/text", {'x-ms-test': 'value'}, function(err, block) {
+			
+			//block uploaded
+			assert.isDefined(block.identifier);
+			assert.isNotNull(block.identifier);
+			
+			assert.isDefined(block.number);
+			assert.isNotNull(block.number);
+		}, function(err, blob){
+			
+			//block list submitted
+			assert.equal(blob.name, 'my Blob');
+			assert.equal(blob.contentType, 'plain/text');
+			assert.equal(blob.url, 'http://mock-account.blob.core.windows.net/containerName/my%20Blob');
+		});		
 	},
 }
