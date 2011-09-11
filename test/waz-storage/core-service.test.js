@@ -145,4 +145,33 @@ module.exports = {
 		
 		assert.equal(requestOptions.headers['Content-Length'], 0);
 	},
+	
+	'should return false when statusCode is less than 400' : function(){
+		var error = new CoreService({}).parseError({statusCode: 100});
+		assert.ok(!error);
+	},
+		
+	'should return true when statusCode equals 400' : function(){
+		var error = new CoreService({}).parseError({statusCode: 400},function(err){
+			assert.equal(err.Code, 400);
+			assert.equal(err.Message, 'An error ocurred');			
+		});
+		
+		assert.ok(error);
+	},
+	
+	'should return true when statusCode is grater than 400' : function(){
+		var mockBody = '<?xml version="1.0" encoding="utf-8"?> \
+		<Error> \
+		  <Code>InvalidMarker</Code> \
+		  <Message>InvalidMarker Message</Message> \
+		</Error>';
+				
+		var error = new CoreService({}).parseError({statusCode: 404, body: mockBody}, function(err){
+			assert.equal(err.Code, 'InvalidMarker');
+			assert.equal(err.Message, 'InvalidMarker Message');
+		});
+		
+		assert.ok(error);
+	},
 }
