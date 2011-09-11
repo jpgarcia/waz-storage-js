@@ -39,13 +39,13 @@ module.exports = {
 		  <NextMarker>q4</NextMarker> \
 		</EnumerationResults>';
 				
-		var mockData = { body: mockResponse, headers: {'x-ms-request-id': 'id', 'x-ms-version': '2009-09-19', 'Date': 'date' } , statusCode: 200};
+		var mockData = { body: mockResponse, headers: {'x-ms-request-id': 'id', 'x-ms-version': '2009-09-19', 'Date': 'date' }, statusCode: 200 };
 
 		var service = new Service({});
 		var mock = sinon.mock(service);	
 		
 		mock.expects("execute").withArgs('get', null, { comp: 'list', prefix: 'q' }, {'x-ms-version': '2009-09-19'}, null)
-							   .yields({statusCode: 200, body: mockData})
+							   .yields(mockData)
 							   .once();
 							
 		var options = { prefix: 'q' };
@@ -87,11 +87,12 @@ module.exports = {
 		var mock = sinon.mock(service);	
 
 		mock.expects("execute").withArgs('put', 'queue1', null, { 'x-ms-version': '2009-09-19', 'x-ms-meta-name': 'value' }, null)
-							   .yields({statusCode: 201})
+							   .yields({statusCode: 201, headers: {'x-ms-request-id': 'id'}})
 							   .once();
 
-		service.create('queue1', {'x-ms-meta-name': 'value'}, function(err){
-			assert.equal(err, null);		
+		service.create('queue1', {'x-ms-meta-name': 'value'}, function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');				
 		});					
 
 		mock.verify();		
@@ -115,11 +116,12 @@ module.exports = {
 		var mock = sinon.mock(service);	
 
 		mock.expects("execute").withArgs('delete', 'queue1', null, { 'x-ms-version': '2009-09-19' }, null)
-							   .yields({statusCode: 204})
+							   .yields({statusCode: 204, headers: {'x-ms-request-id': 'id'}})
 							   .once();
 
-		service.delete('queue1', function(err){
+		service.delete('queue1', function(err, data){
 			assert.equal(err, null);		
+			assert.equal(data['x-ms-request-id'], 'id');			
 		});					
 
 		mock.verify();		
@@ -146,8 +148,9 @@ module.exports = {
 							   .yields({statusCode: 200, headers: { 'x-ms-approximate-message-count': 10, 'x-ms-meta-name': 'value' }})
 							   .once();
 
-		service.getMetadata('queue1', function(err){
-			assert.equal(err, null);		
+		service.getMetadata('queue1', function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-meta-name'], 'value');
 		});					
 
 		mock.verify();		
@@ -174,8 +177,9 @@ module.exports = {
 							   .yields({statusCode: 200, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
 							   .once();
 
-		service.putMetadata('queue1', {'x-ms-meta-name': 'value'},function(err){
-			assert.equal(err, null);		
+		service.putMetadata('queue1', {'x-ms-meta-name': 'value'},function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');
 		});					
 
 		mock.verify();		
@@ -204,8 +208,9 @@ module.exports = {
 							   .yields({statusCode: 201, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
 							   .once();
 
-		service.putMessage('queue1', 'message-content', 10, function(err){
-			assert.equal(err, null);		
+		service.putMessage('queue1', 'message-content', 10, function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');				
 		});					
 
 		mock.verify();		
