@@ -17,7 +17,7 @@ module.exports = {
 		      <Metadata> \
 		        <Color>red</Color> \
 		        <SomeMetadataName>SomeMetadataValue</SomeMetadataName> \
-		      <Metadata> \
+		      </Metadata> \
 		    </Queue> \
 		    <Queue> \
 		      <Name>q2</Name> \
@@ -25,7 +25,7 @@ module.exports = {
 		      <Metadata> \
 		        <Color>blue</Color> \
 		        <SomeMetadataName>SomeMetadataValue</SomeMetadataName> \
-		      <Metadata> \
+		      </Metadata> \
 		    </Queue> \
 		    <Queue> \
 		      <Name>q3</Name> \
@@ -33,7 +33,7 @@ module.exports = {
 		      <Metadata> \
 		        <Color>yellow</Color> \
 		        <SomeMetadataName>SomeMetadataValue</SomeMetadataName> \
-		      <Metadata> \
+		      </Metadata> \
 		    </Queue> \
 		  </Queues> \
 		  <NextMarker>q4</NextMarker> \
@@ -203,18 +203,20 @@ module.exports = {
 		var mock = sinon.mock(service);	
 
 		var expectedPayload = '<QueueMessage><MessageText>message-content</MessageText></QueueMessage>'
-
-		mock.expects("execute").withArgs('put', 'queue1/messages', {messagettl: 10}, { 'x-ms-version': '2009-09-19', }, expectedPayload)
+		
+		var options = {messagettl: 10};
+		
+		mock.expects("execute").withArgs('put', 'queue1/messages', options, { 'x-ms-version': '2009-09-19', }, expectedPayload)
 							   .yields({statusCode: 201, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
 							   .once();
 
-		service.putMessage('queue1', 'message-content', 10, function(err, data){
+		service.putMessage('queue1', 'message-content', options, function(err, data){
 			assert.equal(err, null);
 			assert.equal(data['x-ms-request-id'], 'id');				
 		});					
 
 		mock.verify();		
-	},	
+	},
 	
 	'should return an error when adding a new message': function(){
 		var service = new Service({});
@@ -228,4 +230,128 @@ module.exports = {
 
 		mock.verify();		
 	},
+	
+	'should get messages from a queue': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		var mockResponseBody = '<QueueMessagesList> \
+		    <QueueMessage> \
+		      <MessageId>string-message-id</MessageId> \
+		      <InsertionTime>insertion-time</InsertionTime> \
+		      <ExpirationTime>expiration-time</ExpirationTime> \
+		      <PopReceipt>opaque-string-receipt-data</PopReceipt> \
+		      <TimeNextVisible>time-next-visible</TimeNextVisible> \
+		      <DequeueCount>20</DequeueCount> \
+		      <MessageText>message-body</MessageText> \
+		    </QueueMessage> \
+		</QueueMessagesList>'
+		
+		var options = { numberofmessages: 10, visibilitytimeout: 60 };
+		
+		mock.expects("execute").withArgs('get', 'queue1/messages', options, { 'x-ms-version': '2009-09-19', }, null)
+							   .yields({statusCode: 201, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}, body: mockResponseBody})
+							   .once();
+						
+		service.getMessages('queue1', options, function(err, data){
+			assert.equal(err, null);
+			
+			assert.equal(data['x-ms-version'], '2009-09-19');
+			assert.equal(data['x-ms-request-id'], 'id');
+			
+			assert.equal(data.messages.length, 1);			
+			assert.equal(data.messages[0]['MessageId'], 'string-message-id');
+			assert.equal(data.messages[0]['InsertionTime'], 'insertion-time');
+			assert.equal(data.messages[0]['ExpirationTime'], 'expiration-time');
+			assert.equal(data.messages[0]['PopReceipt'], 'opaque-string-receipt-data');
+			assert.equal(data.messages[0]['TimeNextVisible'], 'time-next-visible');
+			assert.equal(data.messages[0]['DequeueCount'], 20);
+			assert.equal(data.messages[0]['MessageText'], 'message-body');
+		});					
+
+		mock.verify();		
+	},
+	
+	'should get messages from a queue when there are more than one message': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		var mockResponseBody = '<QueueMessagesList> \
+		    <QueueMessage> \
+		      <MessageId>string-message-id</MessageId> \
+		      <InsertionTime>insertion-time</InsertionTime> \
+		      <ExpirationTime>expiration-time</ExpirationTime> \
+		      <PopReceipt>opaque-string-receipt-data</PopReceipt> \
+		      <TimeNextVisible>time-next-visible</TimeNextVisible> \
+		      <DequeueCount>20</DequeueCount> \
+		      <MessageText>message-body</MessageText> \
+		    </QueueMessage> \
+		    <QueueMessage> \
+		      <MessageId>string-message-id2</MessageId> \
+		      <InsertionTime>insertion-time2</InsertionTime> \
+		      <ExpirationTime>expiration-time2</ExpirationTime> \
+		      <PopReceipt>opaque-string-receipt-data2</PopReceipt> \
+		      <TimeNextVisible>time-next-visible2</TimeNextVisible> \
+		      <DequeueCount>202</DequeueCount> \
+		      <MessageText>message-body2</MessageText> \
+		    </QueueMessage> \
+		</QueueMessagesList>'
+		
+		var options = { numberofmessages: 10, visibilitytimeout: 60 };
+		
+		mock.expects("execute").withArgs('get', 'queue1/messages', options, { 'x-ms-version': '2009-09-19', }, null)
+							   .yields({statusCode: 201, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}, body: mockResponseBody})
+							   .once();
+						
+		service.getMessages('queue1', options, function(err, data){
+			assert.equal(err, null);
+			
+			assert.equal(data['x-ms-version'], '2009-09-19');
+			assert.equal(data['x-ms-request-id'], 'id');
+			
+			assert.equal(data.messages.length, 2);			
+			assert.equal(data.messages[0]['MessageId'], 'string-message-id');
+			assert.equal(data.messages[0]['InsertionTime'], 'insertion-time');
+			assert.equal(data.messages[0]['ExpirationTime'], 'expiration-time');
+			assert.equal(data.messages[0]['PopReceipt'], 'opaque-string-receipt-data');
+			assert.equal(data.messages[0]['TimeNextVisible'], 'time-next-visible');
+			assert.equal(data.messages[0]['DequeueCount'], 20);
+			assert.equal(data.messages[0]['MessageText'], 'message-body');
+			
+			assert.equal(data.messages[1]['MessageId'], 'string-message-id2');
+			assert.equal(data.messages[1]['InsertionTime'], 'insertion-time2');
+			assert.equal(data.messages[1]['ExpirationTime'], 'expiration-time2');
+			assert.equal(data.messages[1]['PopReceipt'], 'opaque-string-receipt-data2');
+			assert.equal(data.messages[1]['TimeNextVisible'], 'time-next-visible2');
+			assert.equal(data.messages[1]['DequeueCount'], 202);
+			assert.equal(data.messages[1]['MessageText'], 'message-body2');
+		});					
+
+		mock.verify();		
+	},
+	
+	'should return an empty array of messages': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		var mockResponseBody = '<QueueMessagesList> \
+		</QueueMessagesList>'
+		
+		var options = { numberofmessages: 10, visibilitytimeout: 60 };
+		
+		mock.expects("execute").withArgs('get', 'queue1/messages', options, { 'x-ms-version': '2009-09-19', }, null)
+							   .yields({statusCode: 201, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}, body: mockResponseBody})
+							   .once();
+						
+		service.getMessages('queue1', options, function(err, data){
+			assert.equal(err, null);
+			
+			assert.equal(data['x-ms-version'], '2009-09-19');
+			assert.equal(data['x-ms-request-id'], 'id');
+			
+			assert.equal(data.messages.length, 0);
+		});					
+
+		mock.verify();		
+	},	
 }
