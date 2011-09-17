@@ -237,13 +237,13 @@ module.exports = {
 
 		var mockResponseBody = '<QueueMessagesList> \
 		    <QueueMessage> \
-		      <MessageId>string-message-id</MessageId> \
-		      <InsertionTime>insertion-time</InsertionTime> \
-		      <ExpirationTime>expiration-time</ExpirationTime> \
-		      <PopReceipt>opaque-string-receipt-data</PopReceipt> \
-		      <TimeNextVisible>time-next-visible</TimeNextVisible> \
-		      <DequeueCount>20</DequeueCount> \
-		      <MessageText>message-body</MessageText> \
+			    <MessageId>5974b586-0df3-4e2d-ad0c-18e3892bfca2</MessageId> \
+			    <InsertionTime>Fri, 09 Oct 2009 21:04:30 GMT</InsertionTime> \
+			    <ExpirationTime>Fri, 16 Oct 2009 21:04:30 GMT</ExpirationTime> \
+			    <PopReceipt>YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw</PopReceipt> \
+			    <TimeNextVisible>Fri, 09 Oct 2009 23:29:20 GMT</TimeNextVisible> \
+			    <DequeueCount>1</DequeueCount> \
+			    <MessageText>PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=</MessageText> \
 		    </QueueMessage> \
 		</QueueMessagesList>'
 		
@@ -260,13 +260,13 @@ module.exports = {
 			assert.equal(data['x-ms-request-id'], 'id');
 			
 			assert.equal(data.messages.length, 1);			
-			assert.equal(data.messages[0]['MessageId'], 'string-message-id');
-			assert.equal(data.messages[0]['InsertionTime'], 'insertion-time');
-			assert.equal(data.messages[0]['ExpirationTime'], 'expiration-time');
-			assert.equal(data.messages[0]['PopReceipt'], 'opaque-string-receipt-data');
-			assert.equal(data.messages[0]['TimeNextVisible'], 'time-next-visible');
-			assert.equal(data.messages[0]['DequeueCount'], 20);
-			assert.equal(data.messages[0]['MessageText'], 'message-body');
+			assert.equal(data.messages[0]['MessageId'], '5974b586-0df3-4e2d-ad0c-18e3892bfca2');
+			assert.equal(data.messages[0]['InsertionTime'], 'Fri, 09 Oct 2009 21:04:30 GMT');
+			assert.equal(data.messages[0]['ExpirationTime'], 'Fri, 16 Oct 2009 21:04:30 GMT');
+			assert.equal(data.messages[0]['PopReceipt'], 'YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw');
+			assert.equal(data.messages[0]['TimeNextVisible'], 'Fri, 09 Oct 2009 23:29:20 GMT');
+			assert.equal(data.messages[0]['DequeueCount'], 1);
+			assert.equal(data.messages[0]['MessageText'], 'PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=');
 		});					
 
 		mock.verify();		
@@ -278,22 +278,22 @@ module.exports = {
 
 		var mockResponseBody = '<QueueMessagesList> \
 		    <QueueMessage> \
-		      <MessageId>string-message-id</MessageId> \
-		      <InsertionTime>insertion-time</InsertionTime> \
-		      <ExpirationTime>expiration-time</ExpirationTime> \
-		      <PopReceipt>opaque-string-receipt-data</PopReceipt> \
-		      <TimeNextVisible>time-next-visible</TimeNextVisible> \
-		      <DequeueCount>20</DequeueCount> \
-		      <MessageText>message-body</MessageText> \
+		    <MessageId>5974b586-0df3-4e2d-ad0c-18e3892bfca2</MessageId> \
+		    <InsertionTime>Fri, 09 Oct 2009 21:04:30 GMT</InsertionTime> \
+		    <ExpirationTime>Fri, 16 Oct 2009 21:04:30 GMT</ExpirationTime> \
+		    <PopReceipt>YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw</PopReceipt> \
+		    <TimeNextVisible>Fri, 09 Oct 2009 23:29:20 GMT</TimeNextVisible> \
+		    <DequeueCount>1</DequeueCount> \
+		    <MessageText>PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=</MessageText> \
 		    </QueueMessage> \
 		    <QueueMessage> \
-		      <MessageId>string-message-id2</MessageId> \
-		      <InsertionTime>insertion-time2</InsertionTime> \
-		      <ExpirationTime>expiration-time2</ExpirationTime> \
-		      <PopReceipt>opaque-string-receipt-data2</PopReceipt> \
-		      <TimeNextVisible>time-next-visible2</TimeNextVisible> \
-		      <DequeueCount>202</DequeueCount> \
-		      <MessageText>message-body2</MessageText> \
+		    <MessageId>5974b586-0df3-4e2d-ad0c-18e3892bfca22</MessageId> \
+		    <InsertionTime>Fri, 09 Oct 2009 21:04:30 GMT2</InsertionTime> \
+		    <ExpirationTime>Fri, 16 Oct 2009 21:04:30 GMT2</ExpirationTime> \
+		    <PopReceipt>YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw2</PopReceipt> \
+		    <TimeNextVisible>Fri, 09 Oct 2009 23:29:20 GMT2</TimeNextVisible> \
+		    <DequeueCount>12</DequeueCount> \
+		    <MessageText>PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=2</MessageText> \
 		    </QueueMessage> \
 		</QueueMessagesList>'
 		
@@ -310,21 +310,21 @@ module.exports = {
 			assert.equal(data['x-ms-request-id'], 'id');
 			
 			assert.equal(data.messages.length, 2);			
-			assert.equal(data.messages[0]['MessageId'], 'string-message-id');
-			assert.equal(data.messages[0]['InsertionTime'], 'insertion-time');
-			assert.equal(data.messages[0]['ExpirationTime'], 'expiration-time');
-			assert.equal(data.messages[0]['PopReceipt'], 'opaque-string-receipt-data');
-			assert.equal(data.messages[0]['TimeNextVisible'], 'time-next-visible');
-			assert.equal(data.messages[0]['DequeueCount'], 20);
-			assert.equal(data.messages[0]['MessageText'], 'message-body');
+			assert.equal(data.messages[0]['MessageId'], '5974b586-0df3-4e2d-ad0c-18e3892bfca2');
+			assert.equal(data.messages[0]['InsertionTime'], 'Fri, 09 Oct 2009 21:04:30 GMT');
+			assert.equal(data.messages[0]['ExpirationTime'], 'Fri, 16 Oct 2009 21:04:30 GMT');
+			assert.equal(data.messages[0]['PopReceipt'], 'YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw');
+			assert.equal(data.messages[0]['TimeNextVisible'], 'Fri, 09 Oct 2009 23:29:20 GMT');
+			assert.equal(data.messages[0]['DequeueCount'], 1);
+			assert.equal(data.messages[0]['MessageText'], 'PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=');
 			
-			assert.equal(data.messages[1]['MessageId'], 'string-message-id2');
-			assert.equal(data.messages[1]['InsertionTime'], 'insertion-time2');
-			assert.equal(data.messages[1]['ExpirationTime'], 'expiration-time2');
-			assert.equal(data.messages[1]['PopReceipt'], 'opaque-string-receipt-data2');
-			assert.equal(data.messages[1]['TimeNextVisible'], 'time-next-visible2');
-			assert.equal(data.messages[1]['DequeueCount'], 202);
-			assert.equal(data.messages[1]['MessageText'], 'message-body2');
+			assert.equal(data.messages[1]['MessageId'], '5974b586-0df3-4e2d-ad0c-18e3892bfca22');
+			assert.equal(data.messages[1]['InsertionTime'], 'Fri, 09 Oct 2009 21:04:30 GMT2');
+			assert.equal(data.messages[1]['ExpirationTime'], 'Fri, 16 Oct 2009 21:04:30 GMT2');
+			assert.equal(data.messages[1]['PopReceipt'], 'YzQ4Yzg1MDItYTc0Ny00OWNjLTkxYTUtZGM0MDFiZDAwYzEw2');
+			assert.equal(data.messages[1]['TimeNextVisible'], 'Fri, 09 Oct 2009 23:29:20 GMT2');
+			assert.equal(data.messages[1]['DequeueCount'], 12);
+			assert.equal(data.messages[1]['MessageText'], 'PHRlc3Q+dGhpcyBpcyBhIHRlc3QgbWVzc2FnZTwvdGVzdD4=2');
 		});					
 
 		mock.verify();		
