@@ -354,4 +354,36 @@ module.exports = {
 
 		mock.verify();		
 	},	
+	
+	'should delete a message from a queue': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		mock.expects("execute").withArgs('delete', 'queue1/messages/messageid', { popreceipt: 'popreceipt-value' }, { 'x-ms-version': '2009-09-19' }, null)
+							   .yields({statusCode: 204, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
+							   .once();
+
+		service.deleteMessage('queue1', 'messageid', 'popreceipt-value',function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');
+		});					
+
+		mock.verify();		
+	},
+	
+	'should delete all messages from a queue': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		mock.expects("execute").withArgs('delete', 'queue1/messages', null, { 'x-ms-version': '2009-09-19' }, null)
+							   .yields({statusCode: 204, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
+							   .once();
+
+		service.clearMessages('queue1',function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');
+		});					
+
+		mock.verify();		
+	},	
 }
