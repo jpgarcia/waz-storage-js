@@ -370,7 +370,20 @@ module.exports = {
 
 		mock.verify();		
 	},
-	
+		
+	'should return an error when trying to delete message': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);
+
+		mock.expects("execute").yields({statusCode: 404}).once();
+
+		service.deleteMessage('queue1', 'messageid', 'popreceipt-value',function(err, data){
+			assert.equal(err.Code, 404);		
+		});					
+
+		mock.verify();		
+	},
+		
 	'should delete all messages from a queue': function(){
 		var service = new Service({});
 		var mock = sinon.mock(service);	
@@ -386,4 +399,47 @@ module.exports = {
 
 		mock.verify();		
 	},	
+
+	'should return an error when trying to clear messages': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);
+
+		mock.expects("execute").yields({statusCode: 404}).once();
+
+		service.clearMessages('queue1', function(err, data){
+			assert.equal(err.Code, 404);		
+		});					
+
+		mock.verify();		
+	},
+	
+	'should update a message': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);	
+
+		mock.expects("execute").withArgs('put', 'queue1/messages/messageid', {popreceipt: 'popreceipt-value', visibilitytimeout: 'visibilitytimeout-value' }, { 'x-ms-version': '2009-09-19' }, null)
+							   .yields({statusCode: 204, headers: { 'x-ms-version': '2009-09-19', 'x-ms-request-id': 'id'}})
+							   .once();
+
+		service.updateMessage('queue1', 'messageid', 'popreceipt-value', 'visibilitytimeout-value', function(err, data){
+			assert.equal(err, null);
+			assert.equal(data['x-ms-request-id'], 'id');
+		});					
+
+		mock.verify();		
+	},
+
+	'should return an error when trying to update a messages': function(){
+		var service = new Service({});
+		var mock = sinon.mock(service);
+
+		mock.expects("execute").yields({statusCode: 404}).once();
+
+		service.updateMessage('queue1', 'messageid', 'popreceipt-value', 'visibilitytimeout-value', function(err, data){
+			assert.equal(err.Code, 404);		
+		});					
+
+		mock.verify();		
+	},
+	
 }
